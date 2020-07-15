@@ -1,0 +1,16 @@
+{
+  "folders": [
+	{
+		"path": "..\\..\\kokoa-clone-project"
+	},
+	{
+		"path": ".."
+	},
+	{
+		"path": "..\\..\\ex"
+	}
+],
+  "settings": {
+    "git.ignoreLimitWarning": true
+  }
+}
