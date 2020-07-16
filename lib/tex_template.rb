@@ -15,6 +15,8 @@ module TeXTemplate
   Boilerplate_start = <<-BS
 \\documentclass[12pt,crop,tikz]{standalone}
 \\usepackage{stix2}
+\\usepackage{tikz}
+
 \\usepackage{amsmath}
 \\usepackage{mathrsfs}
 \\usepackage{amsfonts}
@@ -376,6 +378,58 @@ BS
          leftharpoon/.tip={>[left]},
          rightharpoon/.tip={>[right]}
 }
+
+%% tikz datavisualization
+\\tikzdatavisualizationset{%
+  new polar/.style={
+    new axis=angle axis,
+    angle axis={attribute=angle},
+    new axis=radius axis,
+    radius axis={attribute=radius},
+    radius axis/scaling/default=0 at 0 and 1 at 1cm,
+    new object={
+      store=/tikz/data visualization/polar transformer,
+      class=polar transformer,
+      arg1/.expanded=\\pgfkeysvalueof{/tikz/data visualization/angle axis/attribute}/scaled,
+      arg2/.expanded=\\pgfkeysvalueof{/tikz/data visualization/radius axis/attribute}/scaled,
+      arg3 from key=/tikz/data visualization/#1/unit vector 0 degrees,
+      arg4 from key=/tikz/data visualization/#1/unit vector 90 degrees
+    },
+    /tikz/data visualization/#1/unit vector 0 degrees/.initial=\\pgfqpoint{1pt}{0pt},
+    /tikz/data visualization/#1/unit vector 90 degrees/.initial=\\pgfqpoint{0pt}{1pt},
+    /tikz/data visualization/#1/unit vectors/.code 2 args={
+      \\def\\tikz@dv@polar{/tikz/data visualization/#1}
+      \\tikz@scan@one@point\\tikz@lib@dv@polar@a##1
+      \\tikz@scan@one@point\\tikz@lib@dv@polar@b##2
+    }
+  },
+  new polar/.default=polar
+}
+\\def\\tikz@lib@dv@polar@a#1{
+  \\pgfkeyssetvalue{\\tikz@dv@polar/unit vector 0 degrees}{#1}
+}
+\\def\\tikz@lib@dv@polar@b#1{
+  \\pgfkeyssetvalue{\\tikz@dv@polar/unit vector 90 degrees}{#1}
+}
+
+
+\\tikzset{
+  /tikz/data visualization/axis options/.cd,
+  deg/.style={\\tikz@dv@axis/scaling=0 at 0 and 360 at 360},
+  rad/.style={\\tikz@dv@axis/scaling=0 at 0 and pi at 180},
+  grad/.style={\\tikz@dv@axis/scaling=0 at 0 and 400 at 360},
+  percent/.style={\\tikz@dv@axis/scaling=0 at 0 and 100 at 360},
+  full circle/.style={\\tikz@dv@axis/scaling=min at 0 and max at 360},
+  half circle/.style={\\tikz@dv@axis/scaling=min at 0 and max at 180},
+  quarter circle/.style={\\tikz@dv@axis/scaling=min at 0 and max at 90}
+}
+
+
+
+\\endinput
+
+
+
 AS
 
   def TeXTemplate.extract_libraries(s)
